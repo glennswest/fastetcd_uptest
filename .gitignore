@@ -1,0 +1,22 @@
+# Secrets and environment
+.env
+.env.*
+*.pem
+*.key
+proxmox/config.env
+
+# Build artifacts (rendered cloud-init + seed ISOs)
+build/
+*.iso
+*.qcow2
+
+# Measurement outputs
+reports/
+results/
+*.log
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store

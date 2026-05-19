@@ -1,0 +1,2 @@
+instance-id: fastetcd-uptest
+local-hostname: ${HOSTNAME}
