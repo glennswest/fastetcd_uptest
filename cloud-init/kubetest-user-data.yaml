@@ -91,9 +91,15 @@ write_files:
       sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
       systemctl restart containerd
       systemctl enable --now containerd
-      # Install kubeadm/kubelet/kubectl 1.31.
-      dnf install -y --disableexcludes=kubernetes \
-          kubelet-1.31.4 kubeadm-1.31.4 kubectl-1.31.4
+      # Install kubeadm/kubelet/kubectl 1.31. The repo file has an
+      # exclude= line so future `dnf upgrade` doesn't move us off
+      # pinned versions; strip it for the initial install. (Fedora
+      # 43's dnf5 doesn't accept --disableexcludes.)
+      sed -i '/^exclude=/d' /etc/yum.repos.d/kubernetes.repo
+      dnf install -y kubelet-1.31.4 kubeadm-1.31.4 kubectl-1.31.4
+      # Restore exclude so subsequent upgrades stay pinned.
+      printf 'exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni\n' \
+          >> /etc/yum.repos.d/kubernetes.repo
       systemctl enable --now kubelet
       # kubeadm init. Single-node, control-plane untainted below.
       kubeadm init \
